@@ -1,1 +1,10 @@
+### Calculate the number of putative junctions 
+#
+grep -v "@PG" ${SORTED.SAM} |grep -v "@SQ" |grep -v "@HD" |awk '{if ($2 == 0) print $3"_"$4}' |uniq |wc -l
+
+
+#
+### Calculate the number of putative junctions with low read counts (CPM < 1) to be subtracted ###
+# 
+grep -v "@PG" ${SORTED.SAM} |grep -v "@SQ" |grep -v "@HD" |awk '{if ($2 == 0) print $3"_"$4}' |uniq -c |awk '{print $1}' |sort -k1,1n |uniq -c |head -${LOW_CPM_THRESHOLD} |awk 'BEGIN {OFS="\t"} {print $2,$1}' |awk '{sum += $2} END {print sum}'
 
